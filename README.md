@@ -24,11 +24,17 @@ TechMentor-LLM/
 │       ├── download_data.py  # Fetch raw data from HF, Kaggle, CodeQA
 │       ├── clean_data.py     # Standardize, filter, deduplicate
 │       └── convert_to_alpaca.py
+├── training/
+│   └── validate_dataset.py   # Day 3 validation, EDA, W&B artifacts
 ├── notebooks/
 │   └── dataset_report.ipynb  # Dataset exploration and statistics
 ├── reports/
-│   └── dataset_stats.json
+│   ├── dataset_stats.json
+│   ├── category_distribution.png
+│   ├── answer_length_distribution.png
+│   └── sample_records.md
 ├── plan.md
+│   day3_plan.md
 └── pyproject.toml
 ```
 
@@ -141,6 +147,39 @@ Each line is an Alpaca example:
 
 ---
 
+## Dataset validation (Day 3)
+
+After building `train.jsonl` and `eval.jsonl`, run validation and generate reports:
+
+```bash
+uv run python training/validate_dataset.py
+```
+
+This script:
+
+- Validates every Alpaca row (`instruction`, `input`, `output`; output length > 10)
+- Updates `reports/dataset_stats.json` with train/eval counts, categories, and answer-length stats
+- Generates `reports/category_distribution.png` and `reports/answer_length_distribution.png`
+- Detects duplicate inputs/outputs and writes `reports/sample_records.md` (20 random samples)
+
+### Weights & Biases
+
+Log dataset metadata and version the artifact:
+
+```bash
+wandb login
+uv run python training/validate_dataset.py --wandb
+```
+
+Creates a W&B project `techmentor-llm` with job type `dataset-validation` and uploads:
+
+- `train.jsonl`
+- `eval.jsonl`
+- `dataset_stats.json`
+- distribution charts
+
+---
+
 ## Dataset report
 
 Open or run the exploration notebook:
@@ -149,7 +188,7 @@ Open or run the exploration notebook:
 uv run jupyter notebook notebooks/dataset_report.ipynb
 ```
 
-The report covers dataset size, category and difficulty distributions, answer length statistics, duplicate removal, and sample records.
+The report covers dataset overview, category and answer-length visualizations, quality checks, duplicate detection, and sample records.
 
 ---
 

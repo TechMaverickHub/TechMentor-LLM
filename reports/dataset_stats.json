@@ -1,12 +1,32 @@
 {
-  "total_records": 7928,
-  "raw_records": 24242,
-  "removed_records": 16314,
-  "duplicates_removed": 16314,
-  "removed_null_question": 0,
-  "removed_empty_question": 0,
-  "removed_low_quality_answer": 0,
-  "backend": 7,
-  "sql": 13,
-  "ml": 6
+  "dataset_version": "v1",
+  "preprocessing_version": "v1",
+  "train_samples": 504,
+  "eval_samples": 56,
+  "total_samples": 560,
+  "categories": {
+    "backend": 7,
+    "python": 7692,
+    "sql": 13,
+    "ml": 6,
+    "system_design": 24
+  },
+  "sources": {
+    "hf_interview": 186,
+    "kaggle": 50,
+    "codeqa": 7692
+  },
+  "answer_length": {
+    "avg_answer_length": 10.67,
+    "median_answer_length": 8.0,
+    "max_answer_length": 48,
+    "min_answer_length": 5
+  },
+  "duplicates": {
+    "duplicate_inputs": 0,
+    "duplicate_instructions": 556,
+    "duplicate_outputs": 54,
+    "duplicates_removed": 54
+  },
+  "cleaning": {}
 }
