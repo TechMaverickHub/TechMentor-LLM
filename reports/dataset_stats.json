@@ -1,0 +1,12 @@
+{
+  "total_records": 7928,
+  "raw_records": 24242,
+  "removed_records": 16314,
+  "duplicates_removed": 16314,
+  "removed_null_question": 0,
+  "removed_empty_question": 0,
+  "removed_low_quality_answer": 0,
+  "backend": 7,
+  "sql": 13,
+  "ml": 6
+}

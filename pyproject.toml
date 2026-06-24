@@ -1,0 +1,17 @@
+[project]
+name = "techmentor-llm"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12.9"
+dependencies = [
+    "pandas>=2.0",
+    "pyarrow>=15.0",
+    "kagglehub>=0.3",
+    "huggingface-hub>=0.20",
+    "fsspec>=2024.0",
+    "scikit-learn>=1.4",
+    "matplotlib>=3.8",
+    "jupyter>=1.0",
+    "ipykernel>=6.29",
+]
