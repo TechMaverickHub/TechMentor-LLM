@@ -77,7 +77,7 @@ def save_training_artifacts(
 ) -> None:
     ensure_output_dirs()
 
-    training_payload = training_config_dict(lora, training)
+    training_payload = training_config_dict(training, lora)
     lora_payload = lora_config_dict(lora)
 
     training_config_path = OUTPUTS_DIR / "training_config.json"
@@ -114,7 +114,7 @@ def save_training_artifacts(
 def build_wandb_config(lora: LoRAConfig, training: TrainingConfig) -> dict[str, Any]:
     stats = load_dataset_stats()
     return {
-        **training_config_dict(lora, training),
+        **training_config_dict(training, lora),
         "train_samples": stats.get("train_samples"),
         "eval_samples": stats.get("eval_samples"),
         "total_samples": stats.get("total_samples"),
