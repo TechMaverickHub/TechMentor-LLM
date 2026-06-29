@@ -106,7 +106,7 @@ def build_trainer(
         logging_dir=str(LOGS_DIR),
         report_to="wandb" if use_wandb else "none",
         seed=training.seed,
-        max_seq_length=training.max_seq_length,
+        max_length=training.max_seq_length,
         dataset_text_field="text",
         packing=False,
         save_total_limit=2,
