@@ -11,7 +11,7 @@ from typing import Any
 import matplotlib.pyplot as plt
 import pandas as pd
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 PROCESSED_DIR = ROOT / "data" / "processed"
 CLEANED_PATH = ROOT / "data" / "cleaned" / "cleaned_dataset.json"
 REPORTS_DIR = ROOT / "reports"

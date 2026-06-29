@@ -8,7 +8,7 @@ Domain-specific instruction-tuning pipeline for a technical interview mentor mod
 - Explain code snippets
 - Review resumes
 
-This repository currently implements the **dataset engineering and preprocessing** stage. Fine-tuning is planned next — see [`plan.md`](plan.md) for the full roadmap.
+This repository implements the **dataset engineering pipeline** (Days 1–3) and **QLoRA fine-tuning setup** (Day 4). See [`plan.md`](plan.md) and [`day4_plan.md`](day4_plan.md) for the full roadmap.
 
 ---
 
@@ -25,7 +25,19 @@ TechMentor-LLM/
 │       ├── clean_data.py     # Standardize, filter, deduplicate
 │       └── convert_to_alpaca.py
 ├── training/
-│   └── validate_dataset.py   # Day 3 validation, EDA, W&B artifacts
+│   ├── config.py             # Model, LoRA, and training hyperparameters
+│   ├── prompts.py            # Llama chat formatting and test prompts
+│   ├── utils.py              # Dataset loading and artifact saving
+│   ├── scripts/
+│   │   ├── train_unsloth.py  # Primary QLoRA trainer (Unsloth)
+│   │   ├── train_hf.py       # Alternative trainer (HF + PEFT)
+│   │   ├── generate_comparison.py
+│   │   └── validate_dataset.py
+│   ├── outputs/              # Checkpoints and final_adapter/
+│   └── logs/
+├── evaluation/
+│   └── before_after.md       # Base vs fine-tuned comparison
+├── inference.ipynb
 ├── notebooks/
 │   └── dataset_report.ipynb  # Dataset exploration and statistics
 ├── reports/
@@ -35,6 +47,7 @@ TechMentor-LLM/
 │   └── sample_records.md
 ├── plan.md
 │   day3_plan.md
+│   day4_plan.md
 └── pyproject.toml
 ```
 
@@ -152,7 +165,7 @@ Each line is an Alpaca example:
 After building `train.jsonl` and `eval.jsonl`, run validation and generate reports:
 
 ```bash
-uv run python training/validate_dataset.py
+uv run python training/scripts/validate_dataset.py
 ```
 
 This script:
@@ -168,7 +181,7 @@ Log dataset metadata and version the artifact:
 
 ```bash
 wandb login
-uv run python training/validate_dataset.py --wandb
+uv run python training/scripts/validate_dataset.py --wandb
 ```
 
 Creates a W&B project `techmentor-llm` with job type `dataset-validation` and uploads:
@@ -208,13 +221,92 @@ Instruction mix: **392** QA · **56** follow-up · **56** code explanation · **
 
 ---
 
-## Next steps
+## Fine-tuning (Day 4)
 
-- Fine-tune Llama 3.2 3B with QLoRA + Unsloth on `train.jsonl`
-- Evaluate on `eval.jsonl`
-- Log experiments to Weights & Biases
+Fine-tune **Llama 3.2 3B Instruct** with QLoRA on a CUDA GPU (Colab T4 or similar).
 
-See [`plan.md`](plan.md) for the full design document.
+### Install training dependencies
+
+```bash
+uv sync --extra train
+```
+
+Or use `training/requirements.txt` on Colab:
+
+```bash
+pip install -r training/requirements.txt
+```
+
+### Authenticate
+
+```bash
+huggingface-cli login   # access meta-llama/Llama-3.2-3B-Instruct
+wandb login
+```
+
+### Train (Unsloth — recommended)
+
+```bash
+uv run python -m training.scripts.train_unsloth
+```
+
+Alternative using Hugging Face + PEFT:
+
+```bash
+uv run python -m training.scripts.train_hf
+```
+
+Dry-run (load model and dataset without training):
+
+```bash
+uv run python -m training.scripts.train_unsloth --dry-run --no-wandb
+```
+
+### Training configuration
+
+| Setting | Value |
+|---------|-------|
+| Model | `meta-llama/Llama-3.2-3B-Instruct` |
+| Quantization | 4-bit QLoRA |
+| LoRA rank / alpha | 16 / 32 |
+| Epochs | 2 |
+| Learning rate | 2e-4 |
+| Batch size | 2 (×4 grad accumulation) |
+| Max sequence length | 2048 |
+| W&B project | `techmentor-llm` |
+| Run name | `llama32-r16-lr2e-4-v1` |
+
+### Outputs
+
+```text
+training/outputs/final_adapter/    # LoRA adapter (not merged)
+training/outputs/checkpoint-*/
+training/outputs/training_config.json
+training/outputs/lora_config.json
+training/outputs/wandb_run_url.txt
+training/logs/
+```
+
+### Inference and evaluation
+
+```bash
+uv run jupyter notebook inference.ipynb
+uv run python -m training.scripts.generate_comparison
+```
+
+`generate_comparison` writes `evaluation/before_after.md` with base vs fine-tuned outputs for QA, backend, SQL, ML, code explanation, and interview evaluation prompts.
+
+See [`day4_plan.md`](day4_plan.md) for the full fine-tuning plan.
+
+### Full project documentation (PDF)
+
+For a complete code walkthrough, concepts, and interview prep guide:
+
+```text
+docs/TechMentor-LLM-Interview-Guide.pdf
+```
+
+Regenerate with `uv run python docs/generate_documentation.py`.
 
 ---
 

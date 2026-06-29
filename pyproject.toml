@@ -16,3 +16,18 @@ dependencies = [
     "ipykernel>=6.29",
     "wandb>=0.17",
 ]
+
+[project.optional-dependencies]
+train = [
+    "transformers>=4.43",
+    "datasets>=2.20",
+    "trl>=0.9",
+    "peft>=0.12",
+    "bitsandbytes>=0.43",
+    "accelerate>=0.33",
+    "torch>=2.4",
+    "unsloth",
+]
+docs = [
+    "fpdf2>=2.8",
+]

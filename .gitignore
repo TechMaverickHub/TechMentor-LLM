@@ -219,3 +219,7 @@ __marimo__/
 
 # Weights & Biases
 wandb/
+
+# Training outputs
+training/outputs/
+training/logs/
